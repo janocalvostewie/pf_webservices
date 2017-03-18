@@ -10,6 +10,7 @@ import com.mysql.jdbc.Statement;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jws.WebService;
@@ -59,19 +60,65 @@ public class Usuarios {
 
             }
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-              Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
-          }
+        }
         return valores;
     }
     
-    /**
-     * This is a sample web service operation
-     */
-    @WebMethod(operationName = "hello")
-    public String hello(@WebParam(name = "name") String txt) {
-        return "Hello " + txt + " !";
+    @WebMethod(operationName = "InsertarUsuario")
+    public void inserta_usuario(String nombre,String ape1,String ape2,String dni,String direccion,String fecha,String telefono, String sexo) {
+    
+        ResultSet rs = null;
+    
+        
+        try {
+
+            conectarse();
+            
+            String insertar="call inserta_usuario( '"+nombre+"', '"+ape1+"', '"+ape2+"', '"+dni+"', '"+direccion+"', '"+fecha+"', '"+telefono+"','"+sexo+"')";
+            
+            st.executeUpdate(insertar);
+            
+            
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     
+    }
+   @WebMethod(operationName = "ConsultarTrabajadores")
+    public String[][] consultarTrabajadores(){
+
+        ResultSet rs = null;
+       // List<Object> listaValores=null;
+        String valores [][] =null;
+        try {
+
+            conectarse();
+            String sql = "SELECT ID_USUARIO, NOMBRE, APELLIDO1, APELLIDO2, DNI, DIRECCION, FECHA_NACIMIENTO, TELEFONO, SEXO FROM ws_usuarios_detalle";
+            rs = st.executeQuery(sql);
+ 
+            int colCount = rs.getMetaData().getColumnCount();
+           rs.last();
+           int rowCount = rs.getRow();
+           rs.beforeFirst();
+           valores= new String[rowCount][colCount];
+ 
+           int i =0;
+           while(rs.next()){
+               for(int j=0;j<colCount;j++){
+                  valores[i][j]= rs.getString(j+1);
+               }
+                i++;
+ 
+           }
+            
+    
+            
+     
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return valores;
     }
 }
