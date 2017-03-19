@@ -121,4 +121,65 @@ public class Usuarios {
         }
         return valores;
     }
+    
+      @WebMethod(operationName = "devuelveUsuarioLogueo")
+    public String[] devuelveUsuarioLogueo(int id_usuario){
+
+        ResultSet rs = null;
+        String[] valores = new String[2];
+        try {
+
+            conectarse();
+            String sql = "SELECT u.usuario, una.descripcion FROM ws_usuarios u,  ws_usuarios_nivel_acceso una where  u.nivel_acceso=una.id_nivel and u.id_usuario=" + id_usuario ;
+            rs = st.executeQuery(sql);
+
+            while (rs.next()) {
+                valores[0] = rs.getString(1);
+                valores[1] = rs.getString(2);
+               
+
+            }
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return valores;
+    }
+
+    
+    @WebMethod(operationName = "consultarUsuariosTiendas")
+    public String[][] consultarUsuariosTiendas(int id_usuario){
+
+        ResultSet rs = null;
+      
+        String valores [][] =null;
+        try {
+
+            conectarse();
+            String sql = "SELECT t.codigo_tienda,t.tienda, t.ciudad FROM   WS_USUARIOS_TIENDAS ut, WS_TIENDAS t where   ut.CODIGO_TIENDA=t.CODIGO_TIENDA and ut.id_usuario=" + id_usuario ;
+            rs = st.executeQuery(sql);
+ 
+            int colCount = rs.getMetaData().getColumnCount();
+           rs.last();
+           int rowCount = rs.getRow();
+           rs.beforeFirst();
+           valores= new String[rowCount][colCount];
+ 
+           int i =0;
+           while(rs.next()){
+               for(int j=0;j<colCount;j++){
+                  valores[i][j]= rs.getString(j+1);
+               }
+                i++;
+ 
+           }
+            
+    
+            
+     
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return valores;
+    }
 }
