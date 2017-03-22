@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jws.WebService;
@@ -182,4 +183,31 @@ public class Usuarios {
         }
         return valores;
     }
+    
+      @WebMethod(operationName = "ConsultarTrabajadoresObjeto")
+    public List consultarTrabajadoresObjeto(){
+List lista=null;
+        
+        try {
+            
+            ResultSet rs = null;
+            // List<Object> listaValores=null;
+            String valores [][] =null;
+            
+            conectarse();
+            String sql = "SELECT ID_USUARIO, NOMBRE, APELLIDO1, APELLIDO2, DNI, DIRECCION, FECHA_NACIMIENTO, TELEFONO, SEXO FROM ws_usuarios_detalle";
+            rs = st.executeQuery(sql);
+            
+            
+            while(rs.next()){
+                Usuario u=new Usuario(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8),rs.getString(9));
+                lista.add(u);
+            }
+           
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return lista;
+        }
+    
 }
